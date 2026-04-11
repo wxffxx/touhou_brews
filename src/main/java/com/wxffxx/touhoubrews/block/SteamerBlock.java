@@ -2,13 +2,11 @@ package com.wxffxx.touhoubrews.block;
 
 import com.wxffxx.touhoubrews.block.entity.SteamerBlockEntity;
 import com.wxffxx.touhoubrews.registry.ModBlockEntities;
-import com.wxffxx.touhoubrews.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -40,19 +38,12 @@ public class SteamerBlock extends BaseEntityBlock {
         return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
     }
 
-    @Override
-    public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
-    }
+    @Override public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
 
-    @Nullable
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new SteamerBlockEntity(pos, state);
-    }
+    @Nullable @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new SteamerBlockEntity(pos, state); }
 
-    @Nullable
-    @Override
+    @Nullable @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return createTickerHelper(type, ModBlockEntities.STEAMER, SteamerBlockEntity::tick);
     }
@@ -60,24 +51,11 @@ public class SteamerBlock extends BaseEntityBlock {
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
-
         BlockEntity be = level.getBlockEntity(pos);
-        if (!(be instanceof SteamerBlockEntity steamer)) return InteractionResult.PASS;
-
-        ItemStack heldStack = player.getItemInHand(hand);
-        ItemStack currentStack = steamer.getStack();
-
-        if (heldStack.is(ModItems.RICE) && currentStack.isEmpty()) {
-            steamer.setStack(new ItemStack(ModItems.RICE));
-            heldStack.shrink(1);
-            return InteractionResult.SUCCESS;
-        } else if (!currentStack.isEmpty() && heldStack.isEmpty()) {
-            player.getInventory().add(currentStack.copy());
-            steamer.setStack(ItemStack.EMPTY);
-            return InteractionResult.SUCCESS;
+        if (be instanceof SteamerBlockEntity steamer) {
+            player.openMenu(steamer);
         }
-
-        return InteractionResult.PASS;
+        return InteractionResult.CONSUME;
     }
 
     @Override
@@ -85,7 +63,7 @@ public class SteamerBlock extends BaseEntityBlock {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof SteamerBlockEntity steamer) {
-                net.minecraft.world.Containers.dropContents(level, pos, steamer.getInventory());
+                net.minecraft.world.Containers.dropContents(level, pos, steamer);
             }
             super.onRemove(state, level, pos, newState, moved);
         }

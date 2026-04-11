@@ -1,4 +1,30 @@
 {
-  "parent": "block/cross",
-  "textures": { "cross": "touhou_brews:block/grape_vine_stage3" }
+  "textures": {
+    "vine": "touhou_brews:block/grape_vine_stage3",
+    "particle": "touhou_brews:block/grape_vine_stage3"
+  },
+  "elements": [
+    {
+      "__comment": "Vine plane 1 (mature, hanging lower)",
+      "from": [0.8, 0, 8],
+      "to": [15.2, 12, 8],
+      "rotation": { "origin": [8, 8, 8], "axis": "y", "angle": 45 },
+      "shade": false,
+      "faces": {
+        "north": { "texture": "#vine", "uv": [0, 4, 16, 16] },
+        "south": { "texture": "#vine", "uv": [0, 4, 16, 16] }
+      }
+    },
+    {
+      "__comment": "Vine plane 2",
+      "from": [8, 0, 0.8],
+      "to": [8, 12, 15.2],
+      "rotation": { "origin": [8, 8, 8], "axis": "y", "angle": 45 },
+      "shade": false,
+      "faces": {
+        "west": { "texture": "#vine", "uv": [0, 4, 16, 16] },
+        "east": { "texture": "#vine", "uv": [0, 4, 16, 16] }
+      }
+    }
+  ]
 }

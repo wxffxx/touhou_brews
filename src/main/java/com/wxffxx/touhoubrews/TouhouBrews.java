@@ -4,6 +4,7 @@ import com.wxffxx.touhoubrews.registry.ModBlockEntities;
 import com.wxffxx.touhoubrews.registry.ModBlocks;
 import com.wxffxx.touhoubrews.registry.ModItemGroups;
 import com.wxffxx.touhoubrews.registry.ModItems;
+import com.wxffxx.touhoubrews.registry.ModMenuTypes;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ public class TouhouBrews implements ModInitializer {
 		ModBlocks.registerModBlocks();
 		ModItems.registerModItems();
 		ModBlockEntities.registerBlockEntities();
+		ModMenuTypes.register();
 		ModItemGroups.registerItemGroups();
 	}
 }
