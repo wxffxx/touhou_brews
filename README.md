@@ -2,7 +2,7 @@
 
 [简体中文](README_ZH.md)
 
-![Touhou Brews](src/main/resources/assets/touhou_brews/icon.png)
+<!-- [Logo Placeholder] -->
 
 A Minecraft Fabric 1.20.1 mod inspired by Touhou Project, focusing on realistic, immersive brewing and characteristic alcohol production machinery. 
 
