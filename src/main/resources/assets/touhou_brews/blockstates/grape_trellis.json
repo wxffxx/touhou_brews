@@ -1,6 +1,15 @@
 {
   "multipart": [
-    { "apply": { "model": "touhou_brews:block/grape_trellis_post" } },
+    {
+      "__comment": "Show post when supported (block below)",
+      "when": { "supported": "true" },
+      "apply": { "model": "touhou_brews:block/grape_trellis_post" }
+    },
+    {
+      "__comment": "Also show post when standalone (no connections), even if unsupported",
+      "when": { "supported": "false", "north": "false", "south": "false", "east": "false", "west": "false" },
+      "apply": { "model": "touhou_brews:block/grape_trellis_post" }
+    },
     { "when": { "north": "true" }, "apply": { "model": "touhou_brews:block/grape_trellis_side", "uvlock": true } },
     { "when": { "east": "true" }, "apply": { "model": "touhou_brews:block/grape_trellis_side", "y": 90, "uvlock": true } },
     { "when": { "south": "true" }, "apply": { "model": "touhou_brews:block/grape_trellis_side", "y": 180, "uvlock": true } },

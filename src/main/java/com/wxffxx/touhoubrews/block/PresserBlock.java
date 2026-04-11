@@ -2,15 +2,11 @@ package com.wxffxx.touhoubrews.block;
 
 import com.wxffxx.touhoubrews.block.entity.PresserBlockEntity;
 import com.wxffxx.touhoubrews.registry.ModBlockEntities;
-import com.wxffxx.touhoubrews.registry.ModItems;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -44,29 +40,19 @@ public class PresserBlock extends BaseEntityBlock {
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         BlockEntity be = level.getBlockEntity(pos);
-        if (!(be instanceof PresserBlockEntity presser)) return InteractionResult.PASS;
-        ItemStack heldStack = player.getItemInHand(hand);
-        var inv = presser.getInventory();
-
-        if ((heldStack.is(ModItems.SAKE_MASH) || heldStack.is(ModItems.GRAPES)) && inv.get(0).isEmpty()) {
-            inv.set(0, heldStack.copyWithCount(1)); heldStack.shrink(1); presser.setChanged();
-            player.displayClientMessage(Component.literal("Pressing...").withStyle(ChatFormatting.GOLD), true);
-            return InteractionResult.SUCCESS;
+        if (be instanceof PresserBlockEntity presser) {
+            player.openMenu(presser);
         }
-        if (heldStack.isEmpty()) {
-            if (!inv.get(1).isEmpty()) { player.getInventory().add(inv.get(1).copy()); inv.set(1, ItemStack.EMPTY); presser.setChanged(); return InteractionResult.SUCCESS; }
-            if (!inv.get(0).isEmpty()) { player.getInventory().add(inv.get(0).copy()); inv.set(0, ItemStack.EMPTY); presser.setChanged(); return InteractionResult.SUCCESS; }
-            int pct = (int) ((float) presser.getProgress() / presser.getMaxProgress() * 100);
-            if (pct > 0) player.displayClientMessage(Component.literal("Pressing... " + pct + "%").withStyle(ChatFormatting.GOLD), true);
-        }
-        return InteractionResult.PASS;
+        return InteractionResult.CONSUME;
     }
 
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof PresserBlockEntity presser) net.minecraft.world.Containers.dropContents(level, pos, presser.getInventory());
+            if (be instanceof PresserBlockEntity presser) {
+                net.minecraft.world.Containers.dropContents(level, pos, presser);
+            }
             super.onRemove(state, level, pos, newState, moved);
         }
     }

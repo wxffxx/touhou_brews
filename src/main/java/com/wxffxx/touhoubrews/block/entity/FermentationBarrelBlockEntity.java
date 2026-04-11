@@ -1,18 +1,29 @@
 package com.wxffxx.touhoubrews.block.entity;
 
+import com.wxffxx.touhoubrews.menu.FermentationBarrelMenu;
 import com.wxffxx.touhoubrews.registry.ModBlockEntities;
 import com.wxffxx.touhoubrews.registry.ModItems;
+import com.wxffxx.touhoubrews.util.MachineInputRules;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -24,16 +35,31 @@ import org.jetbrains.annotations.Nullable;
  * 发酵桶 - 多配方支持:
  * 1. 清酒线: 米曲 + 蒸米 + 水瓶 → 酒醪 (60秒)
  * 2. 果酒线: 葡萄汁 + 水瓶 → 蕾米莉亚红酒 (45秒)
- *
- * Slots: 0=primary, 1=secondary, 2=water, 3=output
  */
-public class FermentationBarrelBlockEntity extends BlockEntity {
-    private static final int SAKE_PROCESS_TIME = 1200;   // 60 sec
-    private static final int WINE_PROCESS_TIME = 900;    // 45 sec
+public class FermentationBarrelBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, Container {
+    private static final int SAKE_PROCESS_TIME = 1200;
+    private static final int WINE_PROCESS_TIME = 900;
 
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
     private int progress = 0;
     private int currentMaxProgress = SAKE_PROCESS_TIME;
+
+    private final ContainerData data = new ContainerData() {
+        @Override public int get(int index) {
+            return switch (index) {
+                case 0 -> progress;
+                case 1 -> currentMaxProgress;
+                default -> 0;
+            };
+        }
+        @Override public void set(int index, int value) {
+            switch (index) {
+                case 0 -> progress = value;
+                case 1 -> currentMaxProgress = value;
+            }
+        }
+        @Override public int getCount() { return 2; }
+    };
 
     public FermentationBarrelBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.FERMENTATION_BARREL, pos, state);
@@ -47,33 +73,30 @@ public class FermentationBarrelBlockEntity extends BlockEntity {
         ItemStack slot2 = entity.inventory.get(2);
         ItemStack output = entity.inventory.get(3);
 
-        // Detect recipe
         ItemStack resultItem = null;
         int maxTime = 0;
 
-        // Recipe 1: Sake — koji rice (0) + steamed rice (1) + water (2)
         if (!slot0.isEmpty() && slot0.is(ModItems.KOJI_RICE)
-                && !slot1.isEmpty() && slot1.is(ModItems.STEAMED_RICE)
-                && !slot2.isEmpty() && slot2.is(Items.POTION)) {
+                && !slot1.isEmpty() && MachineInputRules.isFermentationSecondaryInput(slot1)
+                && !slot2.isEmpty() && MachineInputRules.isWaterBottle(slot2)) {
             resultItem = new ItemStack(ModItems.SAKE_MASH);
             maxTime = SAKE_PROCESS_TIME;
-        }
-        // Recipe 2: Wine — grape juice (0) + water (2), slot1 unused
-        else if (!slot0.isEmpty() && slot0.is(ModItems.GRAPE_JUICE)
-                && !slot2.isEmpty() && slot2.is(Items.POTION)) {
+        } else if (!slot0.isEmpty() && slot0.is(ModItems.GRAPE_JUICE)
+                && !slot2.isEmpty() && MachineInputRules.isWaterBottle(slot2)) {
             resultItem = new ItemStack(ModItems.REMILIA_WINE);
             maxTime = WINE_PROCESS_TIME;
         }
 
-        if (resultItem == null) { entity.progress = 0; return; }
+        if (resultItem == null) { entity.resetProgress(); return; }
 
         boolean outputFree = output.isEmpty()
                 || (ItemStack.isSameItemSameTags(output, resultItem)
                     && output.getCount() < output.getMaxStackSize());
-        if (!outputFree) { entity.progress = 0; return; }
+        if (!outputFree) { entity.resetProgress(); return; }
 
         entity.currentMaxProgress = maxTime;
         entity.progress++;
+        entity.setChanged();
 
         if (entity.progress % 30 == 0 && level instanceof ServerLevel sl) {
             sl.sendParticles(ParticleTypes.BUBBLE_POP,
@@ -97,15 +120,39 @@ public class FermentationBarrelBlockEntity extends BlockEntity {
             entity.setChanged();
 
             if (level instanceof ServerLevel sl) {
-                sl.playSound(null, pos, SoundEvents.BREWING_STAND_BREW,
-                        SoundSource.BLOCKS, 1.0f, 0.6f);
+                sl.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0f, 0.6f);
             }
         }
     }
 
+    // --- Container ---
+    @Override public int getContainerSize() { return inventory.size(); }
+    @Override public boolean isEmpty() { return inventory.stream().allMatch(ItemStack::isEmpty); }
+    @Override public ItemStack getItem(int slot) { return inventory.get(slot); }
+    @Override public ItemStack removeItem(int slot, int amount) { ItemStack result = ContainerHelper.removeItem(inventory, slot, amount); setChanged(); return result; }
+    @Override public ItemStack removeItemNoUpdate(int slot) { return ContainerHelper.takeItem(inventory, slot); }
+    @Override public void setItem(int slot, ItemStack stack) { inventory.set(slot, stack); if (stack.getCount() > getMaxStackSize()) stack.setCount(getMaxStackSize()); setChanged(); }
+    @Override public boolean canPlaceItem(int slot, ItemStack stack) {
+        return switch (slot) {
+            case 0 -> MachineInputRules.isFermentationPrimaryInput(stack);
+            case 1 -> MachineInputRules.isFermentationSecondaryInput(stack);
+            case 2 -> MachineInputRules.isWaterBottle(stack);
+            default -> false;
+        };
+    }
+    @Override public boolean stillValid(Player player) { return level != null && level.getBlockEntity(worldPosition) == this && player.distanceToSqr(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5) <= 64.0; }
+    @Override public void clearContent() { inventory.clear(); }
+
+    // --- MenuProvider ---
+    @Override
+    public Component getDisplayName() { return Component.translatable("container.touhou_brews.fermentation_barrel"); }
+
+    @Nullable @Override
+    public AbstractContainerMenu createMenu(int syncId, Inventory playerInv, Player player) {
+        return new FermentationBarrelMenu(syncId, playerInv, this, data);
+    }
+
     public NonNullList<ItemStack> getInventory() { return inventory; }
-    public int getProgress() { return progress; }
-    public int getMaxProgress() { return currentMaxProgress; }
 
     @Override protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
@@ -121,10 +168,19 @@ public class FermentationBarrelBlockEntity extends BlockEntity {
     }
 
     @Nullable @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
+    public Packet<ClientGamePacketListener> getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
+    @Override
+    public CompoundTag getUpdateTag() { return saveWithoutMetadata(); }
+
+    private void resetProgress() {
+        if (progress != 0) {
+            progress = 0;
+            setChanged();
+        }
     }
 
     @Override
-    public CompoundTag getUpdateTag() { return saveWithoutMetadata(); }
+    public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
+        buf.writeBlockPos(worldPosition);
+    }
 }

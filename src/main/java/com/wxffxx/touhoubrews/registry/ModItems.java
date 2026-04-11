@@ -23,6 +23,10 @@ public class ModItems {
             new Item(new FabricItemSettings()));
     public static final Item GRAPE_SEEDS = registerItem("grape_seeds",
             new Item(new FabricItemSettings()));
+    public static final Item GREEN_PLUM = registerItem("green_plum",
+            new Item(new FabricItemSettings()));
+    public static final Item GREEN_PLUM_SEEDS = registerItem("green_plum_seeds",
+            new ItemNameBlockItem(ModBlocks.GREEN_PLUM_CROP, new FabricItemSettings()));
 
     // === Brewing Intermediates ===
     public static final Item STEAMED_RICE = registerItem("steamed_rice",
@@ -58,6 +62,17 @@ public class ModItems {
 
     public static final Item REMILIA_WINE = registerItem("remilia_wine",
             new DrinkableItem(new FabricItemSettings().food(REMILIA_WINE_FOOD).stacksTo(16)));
+
+    public static final FoodProperties EIRIN_UMESHU_FOOD = new FoodProperties.Builder()
+            .nutrition(0).saturationMod(0f).alwaysEat()
+            .effect(new MobEffectInstance(MobEffects.REGENERATION, 600, 0), 1.0f)
+            .effect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 2400, 0), 1.0f)
+            .effect(new MobEffectInstance(MobEffects.DIG_SPEED, 2400, 0), 1.0f)
+            .effect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0), 1.0f)
+            .build();
+
+    public static final Item EIRIN_UMESHU = registerItem("eirin_umeshu",
+            new DrinkableItem(new FabricItemSettings().food(EIRIN_UMESHU_FOOD).stacksTo(16)));
 
     private static Item registerItem(String name, Item item) {
         return Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(TouhouBrews.MOD_ID, name), item);

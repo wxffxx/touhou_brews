@@ -1,51 +1,63 @@
-# 东方酒艺 (Touhou Brews)
+# Touhou Brews (东方酒艺)
 
-![Touhou Brews](src/main/resources/assets/touhou_brews/icon.png)
+[简体中文](README_ZH.md)
 
-A Minecraft Fabric 1.20.1 mod inspired by Touhou Project, focusing on realistic, immersive brewing and characteristic alcohol production machinery.
-这是一个基于东方Project主题的 Minecraft Fabric 1.20.1 酿酒工业模组，专注于拟真的酿造工艺流水线和特色酒类。
+<!-- [Logo Placeholder] -->
 
----
+A Minecraft Fabric 1.20.1 mod inspired by Touhou Project, focusing on realistic, immersive brewing and characteristic alcohol production machinery. 
 
-## 酿造工艺系统 / Brewing Pipelines
-
-本模组采用高度还原现实酿造步骤且具有沉浸式交互的机制。机器没有GUI，而是通过手持物品右键交互和粒子效果反馈状态。
-
-### 🍶 东方清酒线 (Sake Pipeline) - **[已完成 Completed]**
-经典的“并行复式发酵”工艺，分为四个阶段：
-1. **水稻种植 (Rice Farming)**: 种下水稻种子，收获 🌾稻米。
-2. **蒸锅 (Steamer)**: 底部垫热源（营火/岩浆），将稻米蒸熟成为 🍚**蒸米**。(10秒)
-3. **培育盘 (Koji Tray)**: 必须放置在亮度≤7的昏暗处。放入蒸米和米曲霉孢子，发酵成 **米曲**。(30秒)
-4. **发酵桶 (Fermentation Barrel)**: 放入 米曲 + 蒸米 + 水瓶。经过漫长的混合发酵，产出 **酒醪**。(60秒)
-5. **压榨床 (Presser)**: 将酒醪压榨出酒液，最终得到传说中的 🍶**鬼族大吟酿 (Ibuki Sake)**。(5秒)
-
-*鬼族大吟酿效果：力量 II，抗性提升 I，缓慢与反胃（微醺惩罚）。*
-
-### 🍷 西洋果酒线 (Wine Pipeline) - **[已完成 Completed]**
-无需糖化的直接发酵工艺：
-1. **葡萄架 (Grape Trellis)**: 类似栅栏可自适应连接搭建藤架。种下葡萄种子，藤蔓会在架子上生长蔓延，无需破坏即可反复采摘 🍇**葡萄**。
-2. **压榨床 (Presser)**: 直接将葡萄压榨成 🥤**葡萄汁**。(3秒)
-3. **发酵桶 (Fermentation Barrel)**: 葡萄汁 + 水瓶直接发酵，得到 🍷**蕾米莉亚的血红葡萄酒 (Remilia's Blood Red Wine)**。(45秒)
-
-*血红葡萄酒效果：夜视 II，力量 II，再生 II，短暂反胃。*
+### Demonstration
+![In-game Demonstration](docs/demonstration.png)
 
 ---
 
-## 开发路线图 / Roadmap & Progress
+## Brewing Pipelines
 
-- [x] **Phase 1: 核心基础构建** (Fabric Mod 初始化，BlockEntity与Tick同步架构，Mojang映射规范)。
-- [x] **Phase 2: 作物系统实装** (8阶段水稻、3阶段龙门架自适应葡萄藤系统完成，支持Loot Tables与Fortune附魔)。
-- [x] **Phase 3: 清酒全流水线** (蒸锅、培育盘、发酵桶、压榨床 的方块交互逻辑、粒子特效和多模型状态全部实装并双语本地化)。
-- [x] **Phase 4A: 果酒拓展** (复用压榨床和发酵桶，通过多配方支持完成西洋红酒分支)。
-- [ ] **Phase 4B: 泡酒配制工艺 (Infusion)**: 计划新增青梅作物与透明泡酒罐，通过基底酒浸泡水果产出梅酒（例如八意永琳的药膳梅酒）。
-- [ ] **Phase 4C: 蒸馏烈酒工艺 (Distillation)**: 计划新增蒸馏塔机器，提纯低度酒为高度烈酒基底。
-- [ ] **Phase 4D: 醉意系统与传说容器**: 计划引入全局多级醉意Debuff系统，并且实装传说物品（如每次饮用自动恢复的【伊吹瓢】）。
+This mod features a highly realistic brewing process combined with immersive interaction mechanics. The machines have been transitioned to GUI-based container interactions: right-click to open the machine interface, place ingredients in the slots, and observe the processing through progress and state indicators.
+
+### 🍶 Sake Pipeline - **[Completed]**
+The classic "multiple parallel fermentation" process, divided into four stages:
+1. **Rice Farming**: Plant rice seeds and harvest 🌾**Rice**.
+2. **Steamer**: Place a heat source (campfire/lava) below. Open the GUI and insert Rice to steam it into 🍚**Steamed Rice**. (10s)
+3. **Koji Tray**: Must be placed in a dim area (light level ≤ 7). Open the GUI and insert Steamed Rice alongside Koji Spores to cultivate **Koji Rice**. (30s)
+4. **Fermentation Barrel**: Open the GUI and insert Koji Rice + Steamed Rice + Water Bottle. After fermentation, it produces **Sake Mash**. (60s)
+5. **Presser**: Open the GUI and press the Sake Mash to yield the legendary 🍶**Ibuki Sake**. (5s)
+
+*Ibuki Sake Effect: Strength II, Resistance I, Slowness & Nausea (tipsyness penalty).*
+
+### 🍷 Wine Pipeline - **[Completed]**
+A direct fermentation process without saccharification:
+1. **Grape Trellis**: A fence-like connecting structure. Plant grape seeds, and vines will grow on the trellis. Harvest 🍇**Grapes** repeatedly without breaking the vine.
+2. **Presser**: Open the GUI to crush grapes into 🥤**Grape Juice**. (3s)
+3. **Fermentation Barrel**: Open the GUI and insert Grape Juice + Water Bottle for direct fermentation, yielding 🍷**Remilia's Blood Red Wine**. (45s)
+
+*Blood Red Wine Effect: Night Vision II, Strength II, Regeneration II, brief Nausea.*
+
+### 🍑 Infusion Pipeline - **[Completed]**
+A compound wine pipeline using base spirits to infuse green plums:
+1. **Green Plum Farming**: Plant green plum seeds to harvest 🍑**Green Plums** suited for infusion.
+2. **Base Spirit**: Complete the Sake Pipeline to obtain 🍶**Ibuki Sake**, which serves as the current version's base spirit.
+3. **Infusion Jar**: Open the GUI and insert Ibuki Sake + Green Plum + Sugar. After sealing and resting, it yields **Eirin's Elegant Umeshu**. (60s)
+
+*Elegant Umeshu Effect: Regeneration I, Speed I, Haste I, and extremely slight Nausea.*
 
 ---
 
-## 安装与运行 / Installation
+## Roadmap & Progress
+
+- [x] **Phase 1: Core Foundation** (Fabric Mod initialization, BlockEntity and Tick synchronization architecture, Mojang mapping standards).
+- [x] **Phase 2: Crop Systems** (8-stage rice crop, 3-stage adaptive grape trellis vines, Loot Tables, Fortune enchantment support).
+- [x] **Phase 3: Sake Pipeline** (Steamer, Koji Tray, Fermentation Barrel, and Presser interaction logic, particle effects, multi-model states, bidirectional localization).
+- [x] **Phase 4A: Wine Extension** (Reusing Presser and Barrel via multi-recipe support for the Western red wine branch).
+- [x] **Phase 4B: Infusion Process** (Added Green Plum crops and Infusion Jars. Infuse green plums with sugar and Ibuki Sake base to produce Eirin's Elegant Umeshu).
+- [ ] **Phase 4C: Distillation Process**: Plan to introduce a Distillation Tower machine to purify low-proof spirits into high-proof alcohol bases.
+- [ ] **Phase 4D: Drunkenness System & Legendary Containers**: Plan to implement a global multi-stage drunkenness debuff system alongside legendary items (e.g., the Ibuki Gourd which auto-replenishes).
+
+---
+
+## Installation
 
 - **Minecraft Version**: `1.20.1`
 - **Mod Loader**: `Fabric 0.15+`
-- **Dependencies**: 需要依赖 `Fabric API`。
-- 如果想参与开发，克隆仓库后使用 `./gradlew build` 编译（推荐使用 JDK 21）。
+- **Dependencies**: Requires `Fabric API`.
+- To contribute to development, clone the repository and run `./gradlew build` (JDK 21 recommended).
