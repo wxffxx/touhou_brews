@@ -1,4 +1,4 @@
-# Touhou Brews (东方酒艺)
+# Touhou Brews
 
 [简体中文](README_ZH.md)
 
@@ -15,28 +15,28 @@ A Minecraft Fabric 1.20.1 mod inspired by Touhou Project, focusing on realistic,
 
 This mod features a highly realistic brewing process combined with immersive interaction mechanics. The machines have been transitioned to GUI-based container interactions: right-click to open the machine interface, place ingredients in the slots, and observe the processing through progress and state indicators.
 
-### 🍶 Sake Pipeline - **[Completed]**
+### Sake Pipeline - **[Completed]**
 The classic "multiple parallel fermentation" process, divided into four stages:
-1. **Rice Farming**: Plant rice seeds and harvest 🌾**Rice**.
-2. **Steamer**: Place a heat source (campfire/lava) below. Open the GUI and insert Rice to steam it into 🍚**Steamed Rice**. (10s)
+1. **Rice Farming**: Plant rice seeds and harvest **Rice**.
+2. **Steamer**: Place a heat source (campfire/lava) below. Open the GUI and insert Rice to steam it into **Steamed Rice**. (10s)
 3. **Koji Tray**: Must be placed in a dim area (light level ≤ 7). Open the GUI and insert Steamed Rice alongside Koji Spores to cultivate **Koji Rice**. (30s)
 4. **Fermentation Barrel**: Open the GUI and insert Koji Rice + Steamed Rice + Water Bottle. After fermentation, it produces **Sake Mash**. (60s)
-5. **Presser**: Open the GUI and press the Sake Mash to yield the legendary 🍶**Ibuki Sake**. (5s)
+5. **Presser**: Open the GUI and press the Sake Mash to yield the legendary **Ibuki Sake**. (5s)
 
 *Ibuki Sake Effect: Strength II, Resistance I, Slowness & Nausea (tipsyness penalty).*
 
-### 🍷 Wine Pipeline - **[Completed]**
+### Wine Pipeline - **[Completed]**
 A direct fermentation process without saccharification:
-1. **Grape Trellis**: A fence-like connecting structure. Plant grape seeds, and vines will grow on the trellis. Harvest 🍇**Grapes** repeatedly without breaking the vine.
-2. **Presser**: Open the GUI to crush grapes into 🥤**Grape Juice**. (3s)
-3. **Fermentation Barrel**: Open the GUI and insert Grape Juice + Water Bottle for direct fermentation, yielding 🍷**Remilia's Blood Red Wine**. (45s)
+1. **Grape Trellis**: A fence-like connecting structure. Plant grape seeds, and vines will grow on the trellis. Harvest **Grapes** repeatedly without breaking the vine.
+2. **Presser**: Open the GUI to crush grapes into **Grape Juice**. (3s)
+3. **Fermentation Barrel**: Open the GUI and insert Grape Juice + Water Bottle for direct fermentation, yielding **Remilia's Blood Red Wine**. (45s)
 
 *Blood Red Wine Effect: Night Vision II, Strength II, Regeneration II, brief Nausea.*
 
-### 🍑 Infusion Pipeline - **[Completed]**
+### Infusion Pipeline - **[Completed]**
 A compound wine pipeline using base spirits to infuse green plums:
-1. **Green Plum Farming**: Plant green plum seeds to harvest 🍑**Green Plums** suited for infusion.
-2. **Base Spirit**: Complete the Sake Pipeline to obtain 🍶**Ibuki Sake**, which serves as the current version's base spirit.
+1. **Green Plum Farming**: Plant green plum seeds to harvest **Green Plums** suited for infusion.
+2. **Base Spirit**: Complete the Sake Pipeline to obtain **Ibuki Sake**, which serves as the current version's base spirit.
 3. **Infusion Jar**: Open the GUI and insert Ibuki Sake + Green Plum + Sugar. After sealing and resting, it yields **Eirin's Elegant Umeshu**. (60s)
 
 *Elegant Umeshu Effect: Regeneration I, Speed I, Haste I, and extremely slight Nausea.*
