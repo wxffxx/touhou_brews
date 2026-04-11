@@ -1,16 +1,27 @@
 package com.wxffxx.touhoubrews.menu;
 
+import com.wxffxx.touhoubrews.menu.slot.FilteredSlot;
+import com.wxffxx.touhoubrews.menu.slot.OutputSlot;
 import com.wxffxx.touhoubrews.registry.ModMenuTypes;
-import com.wxffxx.touhoubrews.registry.ModItems;
+import com.wxffxx.touhoubrews.util.MachineInputRules;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 public class KojiTrayMenu extends AbstractContainerMenu {
+    private static final int MACHINE_SLOT_COUNT = 3;
+    private static final int PLAYER_INV_START = MACHINE_SLOT_COUNT;
+    private static final int PLAYER_INV_END = PLAYER_INV_START + 27;
+    private static final int HOTBAR_START = PLAYER_INV_END;
+    private static final int HOTBAR_END = HOTBAR_START + 9;
+
     private final Container container;
     private final ContainerData data;
 
@@ -20,15 +31,17 @@ public class KojiTrayMenu extends AbstractContainerMenu {
 
     public KojiTrayMenu(int syncId, Inventory playerInv, Container container, ContainerData data) {
         super(ModMenuTypes.KOJI_TRAY, syncId);
+        checkContainerSize(container, MACHINE_SLOT_COUNT);
         this.container = container;
         this.data = data;
+        container.startOpen(playerInv.player);
 
         // Input 1: Steamed Rice
-        this.addSlot(new Slot(container, 0, 38, 35));
+        this.addSlot(new FilteredSlot(container, 0, 38, 35, MachineInputRules::isKojiRiceInput));
         // Input 2: Koji Spores
-        this.addSlot(new Slot(container, 1, 74, 35));
+        this.addSlot(new FilteredSlot(container, 1, 74, 35, MachineInputRules::isKojiSporesInput));
         // Output: Koji Rice
-        this.addSlot(new ResultSlot(container, 2, 134, 35));
+        this.addSlot(new OutputSlot(container, 2, 134, 35));
 
         // Player inventory
         for (int row = 0; row < 3; row++) {
@@ -60,28 +73,37 @@ public class KojiTrayMenu extends AbstractContainerMenu {
         ItemStack stack = slot.getItem();
         ItemStack copy = stack.copy();
 
-        if (index < 3) {
-            if (!this.moveItemStackTo(stack, 3, 39, true)) return ItemStack.EMPTY;
+        if (index < MACHINE_SLOT_COUNT) {
+            if (!this.moveItemStackTo(stack, PLAYER_INV_START, HOTBAR_END, true)) return ItemStack.EMPTY;
         } else {
-            if (stack.is(ModItems.STEAMED_RICE)) {
+            if (MachineInputRules.isKojiRiceInput(stack)) {
                 if (!this.moveItemStackTo(stack, 0, 1, false)) return ItemStack.EMPTY;
-            } else if (stack.is(ModItems.KOJI_SPORES)) {
+            } else if (MachineInputRules.isKojiSporesInput(stack)) {
                 if (!this.moveItemStackTo(stack, 1, 2, false)) return ItemStack.EMPTY;
-            } else {
+            } else if (index < PLAYER_INV_END) {
+                if (!this.moveItemStackTo(stack, HOTBAR_START, HOTBAR_END, false)) return ItemStack.EMPTY;
+            } else if (!this.moveItemStackTo(stack, PLAYER_INV_START, PLAYER_INV_END, false)) {
                 return ItemStack.EMPTY;
             }
         }
 
         if (stack.isEmpty()) slot.set(ItemStack.EMPTY);
         else slot.setChanged();
+
+        if (stack.getCount() == copy.getCount()) {
+            return ItemStack.EMPTY;
+        }
+
+        slot.onTake(player, stack);
         return copy;
     }
 
     @Override
     public boolean stillValid(Player player) { return container.stillValid(player); }
 
-    private static class ResultSlot extends Slot {
-        public ResultSlot(Container container, int index, int x, int y) { super(container, index, x, y); }
-        @Override public boolean mayPlace(ItemStack stack) { return false; }
+    @Override
+    public void removed(Player player) {
+        super.removed(player);
+        container.stopOpen(player);
     }
 }

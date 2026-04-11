@@ -23,6 +23,8 @@ public class ModItemGroups {
                         entries.accept(ModItems.RICE);
                         entries.accept(ModItems.GRAPE_SEEDS);
                         entries.accept(ModItems.GRAPES);
+                        entries.accept(ModItems.GREEN_PLUM_SEEDS);
+                        entries.accept(ModItems.GREEN_PLUM);
 
                         // Brewing Intermediates
                         entries.accept(ModItems.STEAMED_RICE);
@@ -34,12 +36,14 @@ public class ModItemGroups {
                         // Final Drinks
                         entries.accept(ModItems.IBUKI_SAKE);
                         entries.accept(ModItems.REMILIA_WINE);
+                        entries.accept(ModItems.EIRIN_UMESHU);
 
                         // Machines & Structures
                         entries.accept(ModBlocks.STEAMER);
                         entries.accept(ModBlocks.KOJI_TRAY);
                         entries.accept(ModBlocks.FERMENTATION_BARREL);
                         entries.accept(ModBlocks.PRESSER);
+                        entries.accept(ModBlocks.INFUSION_JAR);
                         entries.accept(ModBlocks.GRAPE_TRELLIS);
                     })
                     .build()

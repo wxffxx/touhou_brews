@@ -33,8 +33,9 @@ public class GenerateGuiTextures {
         generateKojiTray();
         generateFermentationBarrel();
         generatePresser();
+        generateInfusionJar();
 
-        System.out.println("All 4 GUI textures generated successfully.");
+        System.out.println("All GUI textures generated successfully.");
     }
 
     // ---- Draw Helpers ----
@@ -166,42 +167,38 @@ public class GenerateGuiTextures {
     }
 
     static void drawArrow(Graphics2D g, int x, int y) {
-        // Right-pointing arrow, approximately 24x17
-        // Arrow body (horizontal bar)
+        // Right-pointing arrow, 24x17
         g.setColor(ARROW_COLOR);
-        g.fillRect(x, y + 5, 17, 6);  // bar
-
-        // Arrow head (triangle pointing right)
-        for (int i = 0; i < 8; i++) {
-            g.drawLine(x + 17 + i, y + 8 - i, x + 17 + i, y + 8 + i);
+        g.fillRect(x, y + 6, 12, 5);
+        for (int i = 0; i < 6; i++) {
+            int inset = i;
+            g.drawLine(x + 12 + i, y + 3 + inset, x + 12 + i, y + 13 - inset);
         }
-        // Slight border
+
         g.setColor(new Color(90, 90, 90));
-        g.drawLine(x, y + 5, x + 16, y + 5);    // top of bar
-        g.drawLine(x, y + 10, x + 16, y + 10);   // bottom of bar
+        g.drawLine(x, y + 6, x + 11, y + 6);
+        g.drawLine(x, y + 10, x + 11, y + 10);
     }
 
     static void drawArrowOutline(Graphics2D g, int x, int y) {
-        // Hollow arrow outline for progress overlay area (24x17)
         g.setColor(new Color(200, 200, 200));
         g.fillRect(x, y, 24, 17);
 
         g.setColor(ARROW_COLOR);
-        // Bar outline
-        g.drawRect(x, y + 5, 16, 6);
-        // Arrow head outline
-        for (int i = 0; i < 8; i++) {
-            g.drawLine(x + 17 + i, y + 8 - i, x + 17 + i, y + 8 - i);
-            g.drawLine(x + 17 + i, y + 8 + i, x + 17 + i, y + 8 + i);
+        g.drawRect(x, y + 6, 11, 4);
+        for (int i = 0; i < 6; i++) {
+            int inset = i;
+            g.drawLine(x + 12 + i, y + 3 + inset, x + 12 + i, y + 3 + inset);
+            g.drawLine(x + 12 + i, y + 13 - inset, x + 12 + i, y + 13 - inset);
         }
     }
 
     static void drawFilledArrowSprite(Graphics2D g, int x, int y) {
-        // Filled white arrow for progress overlay (24x17)
         g.setColor(WHITE_HIGHLIGHT);
-        g.fillRect(x, y + 5, 17, 6);
-        for (int i = 0; i < 8; i++) {
-            g.drawLine(x + 17 + i, y + 8 - i, x + 17 + i, y + 8 + i);
+        g.fillRect(x, y + 6, 12, 5);
+        for (int i = 0; i < 6; i++) {
+            int inset = i;
+            g.drawLine(x + 12 + i, y + 3 + inset, x + 12 + i, y + 13 - inset);
         }
     }
 
@@ -279,9 +276,6 @@ public class GenerateGuiTextures {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 
         drawGuiBackground(g);
-        drawTitle(g, "Steamer");
-        drawInventoryLabel(g);
-
         // Input slot at (55,34)
         drawSlot(g, 55, 34);
 
@@ -311,9 +305,6 @@ public class GenerateGuiTextures {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 
         drawGuiBackground(g);
-        drawTitle(g, "Koji Tray");
-        drawInventoryLabel(g);
-
         // 2 input slots
         drawSlot(g, 37, 34);
         drawSlot(g, 73, 34);
@@ -346,9 +337,6 @@ public class GenerateGuiTextures {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 
         drawGuiBackground(g);
-        drawTitle(g, "Fermentation Barrel");
-        drawInventoryLabel(g);
-
         // 3 input slots
         drawSlot(g, 31, 24);  // primary
         drawSlot(g, 31, 46);  // secondary
@@ -379,9 +367,6 @@ public class GenerateGuiTextures {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 
         drawGuiBackground(g);
-        drawTitle(g, "Presser");
-        drawInventoryLabel(g);
-
         // Input slot at (55,34)
         drawSlot(g, 55, 34);
 
@@ -399,5 +384,24 @@ public class GenerateGuiTextures {
 
         g.dispose();
         save(img, "presser.png");
+    }
+
+    static void generateInfusionJar() throws Exception {
+        BufferedImage img = createBase();
+        Graphics2D g = img.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+
+        drawGuiBackground(g);
+
+        drawSlot(g, 25, 34);
+        drawSlot(g, 49, 34);
+        drawSlot(g, 73, 34);
+        drawLargeOutputSlot(g, 124, 30);
+        drawArrow(g, 98, 35);
+        drawPlayerInventory(g);
+        drawFilledArrowSprite(g, 176, 14);
+
+        g.dispose();
+        save(img, "infusion_jar.png");
     }
 }

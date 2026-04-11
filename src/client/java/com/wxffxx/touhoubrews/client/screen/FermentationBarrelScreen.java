@@ -41,5 +41,21 @@ public class FermentationBarrelScreen extends AbstractContainerScreen<Fermentati
         renderBackground(graphics);
         super.render(graphics, mouseX, mouseY, partialTick);
         renderTooltip(graphics, mouseX, mouseY);
+
+        if (menu.getProgress() > 0 && isHovering(85, 35, 24, 17, mouseX, mouseY)) {
+            graphics.renderTooltip(font,
+                    Component.translatable("gui.touhou_brews.progress", getProgressPercent()),
+                    mouseX, mouseY);
+        }
+    }
+
+    private boolean isHovering(int x, int y, int width, int height, int mouseX, int mouseY) {
+        return mouseX >= leftPos + x && mouseX < leftPos + x + width
+                && mouseY >= topPos + y && mouseY < topPos + y + height;
+    }
+
+    private int getProgressPercent() {
+        int max = menu.getMaxProgress();
+        return max > 0 ? menu.getProgress() * 100 / max : 0;
     }
 }

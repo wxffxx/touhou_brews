@@ -16,6 +16,8 @@ public class ModBlocks {
 
     public static final Block RICE_CROP = registerBlockWithoutItem("rice_crop",
             new RiceCropBlock(FabricBlockSettings.copyOf(Blocks.WHEAT)));
+    public static final Block GREEN_PLUM_CROP = registerBlockWithoutItem("green_plum_crop",
+            new GreenPlumCropBlock(FabricBlockSettings.copyOf(Blocks.WHEAT)));
 
     public static final Block STEAMER = registerBlock("steamer",
             new SteamerBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).noOcclusion()));
@@ -28,6 +30,8 @@ public class ModBlocks {
 
     public static final Block PRESSER = registerBlock("presser",
             new PresserBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).noOcclusion()));
+    public static final Block INFUSION_JAR = registerBlock("infusion_jar",
+            new InfusionJarBlock(FabricBlockSettings.copyOf(Blocks.GLASS).strength(0.8f).noOcclusion()));
 
     public static final Block GRAPE_TRELLIS = registerBlock("grape_trellis",
             new GrapeTrellisBlock(FabricBlockSettings.copyOf(Blocks.OAK_FENCE).noOcclusion()));

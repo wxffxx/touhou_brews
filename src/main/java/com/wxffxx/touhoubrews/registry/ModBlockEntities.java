@@ -34,6 +34,12 @@ public class ModBlockEntities {
                     FabricBlockEntityTypeBuilder.create(PresserBlockEntity::new,
                             ModBlocks.PRESSER).build());
 
+    public static final BlockEntityType<InfusionJarBlockEntity> INFUSION_JAR =
+            Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                    new ResourceLocation(TouhouBrews.MOD_ID, "infusion_jar"),
+                    FabricBlockEntityTypeBuilder.create(InfusionJarBlockEntity::new,
+                            ModBlocks.INFUSION_JAR).build());
+
     public static void registerBlockEntities() {
         TouhouBrews.LOGGER.info("Registering Block Entities for " + TouhouBrews.MOD_ID);
     }

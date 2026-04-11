@@ -39,5 +39,26 @@ public class SteamerScreen extends AbstractContainerScreen<SteamerMenu> {
         renderBackground(graphics);
         super.render(graphics, mouseX, mouseY, partialTick);
         renderTooltip(graphics, mouseX, mouseY);
+
+        if (isHovering(56, 54, 14, 14, mouseX, mouseY)) {
+            Component tooltip = menu.hasHeatSource()
+                    ? Component.translatable("gui.touhou_brews.steamer.heat_ready")
+                    : Component.translatable("gui.touhou_brews.steamer.heat_missing");
+            graphics.renderTooltip(font, tooltip, mouseX, mouseY);
+        } else if (menu.getProgress() > 0 && isHovering(79, 35, 24, 17, mouseX, mouseY)) {
+            graphics.renderTooltip(font,
+                    Component.translatable("gui.touhou_brews.progress", getProgressPercent()),
+                    mouseX, mouseY);
+        }
+    }
+
+    private boolean isHovering(int x, int y, int width, int height, int mouseX, int mouseY) {
+        return mouseX >= leftPos + x && mouseX < leftPos + x + width
+                && mouseY >= topPos + y && mouseY < topPos + y + height;
+    }
+
+    private int getProgressPercent() {
+        int max = menu.getMaxProgress();
+        return max > 0 ? menu.getProgress() * 100 / max : 0;
     }
 }

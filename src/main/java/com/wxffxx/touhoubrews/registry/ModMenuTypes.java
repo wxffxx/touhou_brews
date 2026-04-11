@@ -3,6 +3,7 @@ package com.wxffxx.touhoubrews.registry;
 import com.wxffxx.touhoubrews.menu.SteamerMenu;
 import com.wxffxx.touhoubrews.menu.KojiTrayMenu;
 import com.wxffxx.touhoubrews.menu.FermentationBarrelMenu;
+import com.wxffxx.touhoubrews.menu.InfusionJarMenu;
 import com.wxffxx.touhoubrews.menu.PresserMenu;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.core.Registry;
@@ -26,6 +27,10 @@ public class ModMenuTypes {
     public static final MenuType<PresserMenu> PRESSER =
             Registry.register(BuiltInRegistries.MENU, new ResourceLocation("touhou_brews", "presser"),
                     new ExtendedScreenHandlerType<>(PresserMenu::new));
+
+    public static final MenuType<InfusionJarMenu> INFUSION_JAR =
+            Registry.register(BuiltInRegistries.MENU, new ResourceLocation("touhou_brews", "infusion_jar"),
+                    new ExtendedScreenHandlerType<>(InfusionJarMenu::new));
 
     public static void register() {
         // Static init triggers registration

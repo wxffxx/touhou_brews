@@ -3,20 +3,23 @@ package com.wxffxx.touhoubrews.block.entity;
 import com.wxffxx.touhoubrews.menu.PresserMenu;
 import com.wxffxx.touhoubrews.registry.ModBlockEntities;
 import com.wxffxx.touhoubrews.registry.ModItems;
+import com.wxffxx.touhoubrews.util.MachineInputRules;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -32,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
  * 1. 酒醪 → 鬼族大吟酿 (5秒)
  * 2. 葡萄 → 葡萄汁 (3秒)
  */
-public class PresserBlockEntity extends BlockEntity implements MenuProvider, Container {
+public class PresserBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, Container {
     private static final int SAKE_PROCESS_TIME = 100;
     private static final int GRAPE_PROCESS_TIME = 60;
 
@@ -66,7 +69,7 @@ public class PresserBlockEntity extends BlockEntity implements MenuProvider, Con
         ItemStack input = entity.inventory.get(0);
         ItemStack output = entity.inventory.get(1);
 
-        if (input.isEmpty()) { entity.progress = 0; return; }
+        if (input.isEmpty()) { entity.resetProgress(); return; }
 
         ItemStack resultItem;
         int maxTime;
@@ -77,16 +80,17 @@ public class PresserBlockEntity extends BlockEntity implements MenuProvider, Con
             resultItem = new ItemStack(ModItems.GRAPE_JUICE);
             maxTime = GRAPE_PROCESS_TIME;
         } else {
-            entity.progress = 0; return;
+            entity.resetProgress(); return;
         }
 
         boolean outputFree = output.isEmpty()
                 || (ItemStack.isSameItemSameTags(output, resultItem)
                     && output.getCount() < output.getMaxStackSize());
-        if (!outputFree) { entity.progress = 0; return; }
+        if (!outputFree) { entity.resetProgress(); return; }
 
         entity.currentMaxProgress = maxTime;
         entity.progress++;
+        entity.setChanged();
 
         if (entity.progress % 10 == 0 && level instanceof ServerLevel sl) {
             sl.sendParticles(ParticleTypes.DRIPPING_HONEY,
@@ -115,6 +119,7 @@ public class PresserBlockEntity extends BlockEntity implements MenuProvider, Con
     @Override public ItemStack removeItem(int slot, int amount) { ItemStack result = ContainerHelper.removeItem(inventory, slot, amount); setChanged(); return result; }
     @Override public ItemStack removeItemNoUpdate(int slot) { return ContainerHelper.takeItem(inventory, slot); }
     @Override public void setItem(int slot, ItemStack stack) { inventory.set(slot, stack); if (stack.getCount() > getMaxStackSize()) stack.setCount(getMaxStackSize()); setChanged(); }
+    @Override public boolean canPlaceItem(int slot, ItemStack stack) { return slot == 0 && MachineInputRules.isPresserInput(stack); }
     @Override public boolean stillValid(Player player) { return level != null && level.getBlockEntity(worldPosition) == this && player.distanceToSqr(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5) <= 64.0; }
     @Override public void clearContent() { inventory.clear(); }
 
@@ -146,4 +151,16 @@ public class PresserBlockEntity extends BlockEntity implements MenuProvider, Con
     public Packet<ClientGamePacketListener> getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
     @Override
     public CompoundTag getUpdateTag() { return saveWithoutMetadata(); }
+
+    private void resetProgress() {
+        if (progress != 0) {
+            progress = 0;
+            setChanged();
+        }
+    }
+
+    @Override
+    public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
+        buf.writeBlockPos(worldPosition);
+    }
 }
