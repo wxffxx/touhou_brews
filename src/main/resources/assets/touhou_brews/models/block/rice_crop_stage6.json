@@ -1,0 +1,6 @@
+{
+    "parent": "block/crop",
+    "textures": {
+        "crop": "touhou_brews:block/rice_crop_stage6"
+    }
+}

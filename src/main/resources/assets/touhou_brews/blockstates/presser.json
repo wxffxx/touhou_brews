@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "touhou_brews:block/presser"
+    },
+    "facing=south": {
+      "model": "touhou_brews:block/presser",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "touhou_brews:block/presser",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "touhou_brews:block/presser",
+      "y": 270
+    }
+  }
+}

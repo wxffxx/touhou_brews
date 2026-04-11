@@ -1,0 +1,4 @@
+{
+  "parent": "block/fence_side",
+  "textures": { "texture": "touhou_brews:block/grape_trellis" }
+}
