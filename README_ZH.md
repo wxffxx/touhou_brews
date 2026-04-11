@@ -7,7 +7,7 @@
 这是一个基于东方Project主题的 Minecraft Fabric 1.20.1 酿酒工业模组，专注于拟真的酿造工艺流水线和特色酒类。
 
 ### 游戏内效果预览
-![In-game Demonstration](docs/image.png)
+![In-game Demonstration](docs/demonstration.png)
 
 ---
 

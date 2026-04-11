@@ -7,7 +7,7 @@
 A Minecraft Fabric 1.20.1 mod inspired by Touhou Project, focusing on realistic, immersive brewing and characteristic alcohol production machinery. 
 
 ### Demonstration
-![In-game Demonstration](docs/image.png)
+![In-game Demonstration](docs/demonstration.png)
 
 ---
 
