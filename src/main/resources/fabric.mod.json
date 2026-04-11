@@ -1,33 +1,29 @@
 {
 	"schemaVersion": 1,
-	"id": "modid",
+	"id": "touhou_brews",
 	"version": "${version}",
-	"name": "Example Mod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "东方酒艺 (Touhou Brews)",
+	"description": "东方Project主题的酿酒模组。 Touhou Project themed brewing mod.",
 	"authors": [
-		"Me!"
+		"wxffxx"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "",
+		"sources": ""
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/modid/icon.png",
+	"icon": "assets/touhou_brews/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.example.ExampleMod"
+			"com.wxffxx.touhoubrews.TouhouBrews"
 		],
 		"client": [
-			"com.example.client.ExampleModClient"
+			"com.wxffxx.touhoubrews.client.TouhouBrewsClient"
 		]
 	},
 	"mixins": [
-		"modid.mixins.json",
-		{
-			"config": "modid.client.mixins.json",
-			"environment": "client"
-		}
+		"touhou_brews.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.18.6",

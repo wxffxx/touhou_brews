@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "touhou_brews:block/steamer"
+    },
+    "facing=south": {
+      "model": "touhou_brews:block/steamer",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "touhou_brews:block/steamer",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "touhou_brews:block/steamer",
+      "y": 270
+    }
+  }
+}

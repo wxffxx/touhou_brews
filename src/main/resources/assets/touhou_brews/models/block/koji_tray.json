@@ -1,0 +1,20 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "all": "touhou_brews:block/koji_tray"
+  },
+  "elements": [
+    {
+      "from": [1, 0, 1],
+      "to": [15, 4, 15],
+      "faces": {
+        "down":  {"texture": "#all", "cullface": "down"},
+        "up":    {"texture": "#all"},
+        "north": {"texture": "#all"},
+        "south": {"texture": "#all"},
+        "east":  {"texture": "#all"},
+        "west":  {"texture": "#all"}
+      }
+    }
+  ]
+}

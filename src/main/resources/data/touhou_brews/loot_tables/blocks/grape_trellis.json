@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        { "type": "minecraft:item", "name": "touhou_brews:grape_trellis" }
+      ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "touhou_brews:grape_trellis",
+          "properties": { "age": "3" }
+        }
+      ],
+      "entries": [
+        { "type": "minecraft:item", "name": "touhou_brews:grapes" }
+      ]
+    }
+  ]
+}
