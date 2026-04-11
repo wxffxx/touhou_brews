@@ -1,0 +1,4 @@
+{
+  "parent": "block/cross",
+  "textures": { "cross": "touhou_brews:block/grape_vine_stage3" }
+}

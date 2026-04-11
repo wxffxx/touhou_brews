@@ -1,0 +1,12 @@
+{
+  "multipart": [
+    { "apply": { "model": "touhou_brews:block/grape_trellis_post" } },
+    { "when": { "north": "true" }, "apply": { "model": "touhou_brews:block/grape_trellis_side", "uvlock": true } },
+    { "when": { "east": "true" }, "apply": { "model": "touhou_brews:block/grape_trellis_side", "y": 90, "uvlock": true } },
+    { "when": { "south": "true" }, "apply": { "model": "touhou_brews:block/grape_trellis_side", "y": 180, "uvlock": true } },
+    { "when": { "west": "true" }, "apply": { "model": "touhou_brews:block/grape_trellis_side", "y": 270, "uvlock": true } },
+    { "when": { "age": "1" }, "apply": { "model": "touhou_brews:block/grape_vine_stage1" } },
+    { "when": { "age": "2" }, "apply": { "model": "touhou_brews:block/grape_vine_stage2" } },
+    { "when": { "age": "3" }, "apply": { "model": "touhou_brews:block/grape_vine_stage3" } }
+  ]
+}

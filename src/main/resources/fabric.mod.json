@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "touhou_brews",
+	"version": "${version}",
+	"name": "东方酒艺 (Touhou Brews)",
+	"description": "东方Project主题的酿酒模组。 Touhou Project themed brewing mod.",
+	"authors": [
+		"wxffxx"
+	],
+	"contact": {
+		"homepage": "",
+		"sources": ""
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/touhou_brews/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.wxffxx.touhoubrews.TouhouBrews"
+		],
+		"client": [
+			"com.wxffxx.touhoubrews.client.TouhouBrewsClient"
+		]
+	},
+	"mixins": [
+		"touhou_brews.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.6",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	}
+}
