@@ -39,3 +39,10 @@ replay_*.log
 *.hprof
 *.jfr
 textures_prompts.txt
+local_notes.md
+
+# pending / WIP assets (not ready to commit)
+Pending Assets/
+
+# local documentation
+docs/

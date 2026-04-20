@@ -38,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 public class PresserBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, Container {
     private static final int SAKE_PROCESS_TIME = 100;
     private static final int GRAPE_PROCESS_TIME = 60;
+    private static final int BAIJIU_PROCESS_TIME = 140;
 
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
     private int progress = 0;
@@ -79,6 +80,9 @@ public class PresserBlockEntity extends BlockEntity implements ExtendedScreenHan
         } else if (input.is(ModItems.GRAPES)) {
             resultItem = new ItemStack(ModItems.GRAPE_JUICE);
             maxTime = GRAPE_PROCESS_TIME;
+        } else if (input.is(ModItems.HUANGJIU)) {
+            resultItem = new ItemStack(ModItems.BAIJIU);
+            maxTime = BAIJIU_PROCESS_TIME;
         } else {
             entity.resetProgress(); return;
         }

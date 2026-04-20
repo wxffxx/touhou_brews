@@ -1,0 +1,6 @@
+{
+  "parent": "block/crop",
+  "textures": {
+    "crop": "touhou_brews:block/hops_crop_stage7"
+  }
+}

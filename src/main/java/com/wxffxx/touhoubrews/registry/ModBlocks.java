@@ -18,6 +18,8 @@ public class ModBlocks {
             new RiceCropBlock(FabricBlockSettings.copyOf(Blocks.WHEAT)));
     public static final Block GREEN_PLUM_CROP = registerBlockWithoutItem("green_plum_crop",
             new GreenPlumCropBlock(FabricBlockSettings.copyOf(Blocks.WHEAT)));
+    public static final Block HOPS_CROP = registerBlockWithoutItem("hops_crop",
+            new HopsCropBlock(FabricBlockSettings.copyOf(Blocks.WHEAT)));
 
     public static final Block STEAMER = registerBlock("steamer",
             new SteamerBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).noOcclusion()));
@@ -35,6 +37,9 @@ public class ModBlocks {
 
     public static final Block GRAPE_TRELLIS = registerBlock("grape_trellis",
             new GrapeTrellisBlock(FabricBlockSettings.copyOf(Blocks.OAK_FENCE).noOcclusion()));
+
+    public static final Block ADMIN_BREW = registerBlock("admin_brew",
+            new AdminBrewBlock(FabricBlockSettings.copyOf(Blocks.BEDROCK)));
 
     private static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);
