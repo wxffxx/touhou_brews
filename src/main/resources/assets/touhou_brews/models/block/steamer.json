@@ -1,6 +1,8 @@
 {
-  "parent": "block/cube_all",
+  "parent": "block/cube_bottom_top",
   "textures": {
-    "all": "touhou_brews:block/steamer"
+    "side": "touhou_brews:block/steamer",
+    "top": "touhou_brews:block/steamer_top",
+    "bottom": "minecraft:block/iron_block"
   }
 }

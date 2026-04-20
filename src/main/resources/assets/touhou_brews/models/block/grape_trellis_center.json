@@ -1,0 +1,21 @@
+{
+  "textures": {
+    "texture": "touhou_brews:block/grape_trellis",
+    "particle": "touhou_brews:block/grape_trellis"
+  },
+  "elements": [
+    {
+      "__comment": "Central beam",
+      "from": [5, 12, 5],
+      "to": [11, 14, 11],
+      "faces": {
+        "down":  { "texture": "#texture", "uv": [5, 5, 11, 11] },
+        "up":    { "texture": "#texture", "uv": [5, 5, 11, 11] },
+        "north": { "texture": "#texture", "uv": [5, 0, 11, 2] },
+        "south": { "texture": "#texture", "uv": [5, 0, 11, 2] },
+        "west":  { "texture": "#texture", "uv": [5, 0, 11, 2] },
+        "east":  { "texture": "#texture", "uv": [5, 0, 11, 2] }
+      }
+    }
+  ]
+}

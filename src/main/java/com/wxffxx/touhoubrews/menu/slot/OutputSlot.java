@@ -13,4 +13,12 @@ public class OutputSlot extends Slot {
     public boolean mayPlace(ItemStack stack) {
         return false;
     }
+
+    @Override
+    public void onTake(net.minecraft.world.entity.player.Player player, ItemStack stack) {
+        if (this.container instanceof com.wxffxx.touhoubrews.block.entity.BrewingMachine m) {
+            m.extractBrew();
+        }
+        super.onTake(player, stack);
+    }
 }

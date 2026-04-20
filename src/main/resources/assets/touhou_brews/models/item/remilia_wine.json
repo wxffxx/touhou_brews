@@ -1,1 +1,6 @@
-{ "parent": "item/generated", "textures": { "layer0": "touhou_brews:item/remilia_wine" } }
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "touhou_brews:item/remilia_wine_legendary"
+  }
+}

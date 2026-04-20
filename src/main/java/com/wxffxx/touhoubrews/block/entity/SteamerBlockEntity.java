@@ -25,6 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.Blocks;
@@ -68,8 +69,12 @@ public class SteamerBlockEntity extends BlockEntity implements ExtendedScreenHan
             return;
         }
 
+        ItemStack resultItem = input.is(Items.WHEAT)
+                ? new ItemStack(ModItems.WORT)
+                : new ItemStack(ModItems.STEAMED_RICE);
+
         boolean outputFree = output.isEmpty()
-                || (output.is(ModItems.STEAMED_RICE) && output.getCount() < output.getMaxStackSize());
+                || (ItemStack.isSameItemSameTags(output, resultItem) && output.getCount() < output.getMaxStackSize());
         if (!outputFree) { entity.resetProgress(); return; }
 
         if (!entity.hasHeatSource()) {
@@ -90,7 +95,7 @@ public class SteamerBlockEntity extends BlockEntity implements ExtendedScreenHan
             entity.progress = 0;
             input.shrink(1);
             if (output.isEmpty()) {
-                entity.inventory.set(1, new ItemStack(ModItems.STEAMED_RICE));
+                entity.inventory.set(1, resultItem);
             } else {
                 output.grow(1);
             }

@@ -69,11 +69,23 @@ public class InfusionJarBlockEntity extends BlockEntity implements ExtendedScree
         ItemStack sugar = entity.inventory.get(2);
         ItemStack output = entity.inventory.get(3);
 
-        boolean hasInputs = MachineInputRules.isInfusionBaseInput(base)
+        boolean matchesUmeshu = MachineInputRules.isInfusionBaseInput(base)
+                && base.is(ModItems.IBUKI_SAKE)
                 && MachineInputRules.isInfusionFruitInput(fruit)
+                && fruit.is(ModItems.GREEN_PLUM)
                 && MachineInputRules.isInfusionSweetenerInput(sugar);
+        boolean matchesAomeshu = MachineInputRules.isInfusionBaseInput(base)
+                && base.is(ModItems.GRAPE_JUICE)
+                && MachineInputRules.isInfusionFruitInput(fruit)
+                && fruit.is(ModItems.GREEN_PLUM)
+                && MachineInputRules.isInfusionSweetenerInput(sugar);
+        // Infusion gives a fixed mid-quality result (Q3)
+        ItemStack resultStack = matchesUmeshu  ? new ItemStack(ModItems.EIRIN_UMESHU_Q3)
+                : matchesAomeshu ? new ItemStack(ModItems.AOMESHU_Q3)
+                : ItemStack.EMPTY;
+        boolean hasInputs = !resultStack.isEmpty();
         boolean outputFree = output.isEmpty()
-                || (output.is(ModItems.EIRIN_UMESHU) && output.getCount() < output.getMaxStackSize());
+                || (ItemStack.isSameItemSameTags(output, resultStack) && output.getCount() < output.getMaxStackSize());
         if (!hasInputs || !outputFree) {
             entity.resetProgress();
             return;
@@ -95,7 +107,7 @@ public class InfusionJarBlockEntity extends BlockEntity implements ExtendedScree
             sugar.shrink(1);
 
             if (output.isEmpty()) {
-                entity.inventory.set(3, new ItemStack(ModItems.EIRIN_UMESHU));
+                entity.inventory.set(3, resultStack);
             } else {
                 output.grow(1);
             }

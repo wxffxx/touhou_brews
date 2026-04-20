@@ -1,5 +1,6 @@
 package com.wxffxx.touhoubrews.registry;
 
+import com.wxffxx.touhoubrews.menu.AdminBrewMenu;
 import com.wxffxx.touhoubrews.menu.SteamerMenu;
 import com.wxffxx.touhoubrews.menu.KojiTrayMenu;
 import com.wxffxx.touhoubrews.menu.FermentationBarrelMenu;
@@ -31,6 +32,10 @@ public class ModMenuTypes {
     public static final MenuType<InfusionJarMenu> INFUSION_JAR =
             Registry.register(BuiltInRegistries.MENU, new ResourceLocation("touhou_brews", "infusion_jar"),
                     new ExtendedScreenHandlerType<>(InfusionJarMenu::new));
+
+    public static final MenuType<AdminBrewMenu> ADMIN_BREW =
+            Registry.register(BuiltInRegistries.MENU, new ResourceLocation("touhou_brews", "admin_brew"),
+                    new ExtendedScreenHandlerType<>(AdminBrewMenu::new));
 
     public static void register() {
         // Static init triggers registration

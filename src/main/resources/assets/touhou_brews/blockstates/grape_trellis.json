@@ -1,6 +1,10 @@
 {
   "multipart": [
     {
+      "__comment": "Always show the center beam",
+      "apply": { "model": "touhou_brews:block/grape_trellis_center" }
+    },
+    {
       "__comment": "Show post when supported (block below)",
       "when": { "supported": "true" },
       "apply": { "model": "touhou_brews:block/grape_trellis_post" }
