@@ -4,8 +4,10 @@ import com.wxffxx.touhoubrews.menu.PresserMenu;
 import com.wxffxx.touhoubrews.registry.ModBlockEntities;
 import com.wxffxx.touhoubrews.registry.ModItems;
 import com.wxffxx.touhoubrews.util.MachineInputRules;
+import com.wxffxx.touhoubrews.util.QualityAlgorithm;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -18,8 +20,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -30,12 +32,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * 压榨床 - 多配方支持:
- * 1. 酒醪 → 鬼族大吟酿 (5秒)
- * 2. 葡萄 → 葡萄汁 (3秒)
- */
-public class PresserBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, Container {
+public class PresserBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, WorldlyContainer, BrewingMachine {
     private static final int SAKE_PROCESS_TIME = 100;
     private static final int GRAPE_PROCESS_TIME = 60;
     private static final int BAIJIU_PROCESS_TIME = 140;
@@ -68,31 +65,31 @@ public class PresserBlockEntity extends BlockEntity implements ExtendedScreenHan
     public static void tick(Level level, BlockPos pos, BlockState state, PresserBlockEntity entity) {
         if (level.isClientSide) return;
         ItemStack input = entity.inventory.get(0);
-        ItemStack output = entity.inventory.get(1);
 
-        if (input.isEmpty()) { entity.resetProgress(); return; }
-
-        ItemStack resultItem;
-        int maxTime;
-        if (input.is(ModItems.SAKE_MASH)) {
-            resultItem = new ItemStack(ModItems.IBUKI_SAKE);
-            maxTime = SAKE_PROCESS_TIME;
-        } else if (input.is(ModItems.GRAPES)) {
-            resultItem = new ItemStack(ModItems.GRAPE_JUICE);
-            maxTime = GRAPE_PROCESS_TIME;
-        } else if (input.is(ModItems.HUANGJIU)) {
-            resultItem = new ItemStack(ModItems.BAIJIU);
-            maxTime = BAIJIU_PROCESS_TIME;
-        } else {
-            entity.resetProgress(); return;
+        if (input.isEmpty()) {
+            entity.resetProgress();
+            if (!entity.inventory.get(1).isEmpty()) entity.inventory.set(1, ItemStack.EMPTY);
+            return;
         }
 
-        boolean outputFree = output.isEmpty()
-                || (ItemStack.isSameItemSameTags(output, resultItem)
-                    && output.getCount() < output.getMaxStackSize());
-        if (!outputFree) { entity.resetProgress(); return; }
+        String brewTypeId = null;
+        int perfectTime;
 
-        entity.currentMaxProgress = maxTime;
+        if (input.is(ModItems.SAKE_MASH)) {
+            brewTypeId = "ibuki_sake";
+            perfectTime = SAKE_PROCESS_TIME;
+        } else if (input.is(ModItems.GRAPES)) {
+            perfectTime = GRAPE_PROCESS_TIME;
+        } else if (input.is(ModItems.HUANGJIU)) {
+            brewTypeId = "baijiu";
+            perfectTime = BAIJIU_PROCESS_TIME;
+        } else {
+            entity.resetProgress();
+            if (!entity.inventory.get(1).isEmpty()) entity.inventory.set(1, ItemStack.EMPTY);
+            return;
+        }
+
+        entity.currentMaxProgress = perfectTime;
         entity.progress++;
         entity.setChanged();
 
@@ -101,18 +98,26 @@ public class PresserBlockEntity extends BlockEntity implements ExtendedScreenHan
                     pos.getX()+0.5, pos.getY()+0.3, pos.getZ()+0.5, 1, 0.2, 0.0, 0.2, 0.0);
         }
 
-        if (entity.progress >= maxTime) {
-            entity.progress = 0;
-            input.shrink(1);
-            if (output.isEmpty()) {
-                entity.inventory.set(1, resultItem.copy());
-            } else {
-                output.grow(1);
-            }
-            entity.setChanged();
-            if (level instanceof ServerLevel sl) {
-                sl.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0f, 1.2f);
-            }
+        if (brewTypeId != null) {
+            int quality = QualityAlgorithm.calculateQuality(entity.progress, perfectTime, 0);
+            entity.inventory.set(1, ModItems.resolveBrewOutput(brewTypeId, quality));
+        } else {
+            entity.inventory.set(1, new ItemStack(ModItems.GRAPE_JUICE));
+        }
+    }
+
+    @Override
+    public void extractBrew() {
+        ItemStack output = inventory.get(1);
+        if (output.isEmpty() || progress == 0) return;
+
+        inventory.set(0, ItemStack.EMPTY);
+        inventory.set(1, ItemStack.EMPTY);
+        progress = 0;
+        setChanged();
+
+        if (level instanceof ServerLevel sl) {
+            sl.playSound(null, worldPosition, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0f, 1.2f);
         }
     }
 
@@ -126,6 +131,11 @@ public class PresserBlockEntity extends BlockEntity implements ExtendedScreenHan
     @Override public boolean canPlaceItem(int slot, ItemStack stack) { return slot == 0 && MachineInputRules.isPresserInput(stack); }
     @Override public boolean stillValid(Player player) { return level != null && level.getBlockEntity(worldPosition) == this && player.distanceToSqr(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5) <= 64.0; }
     @Override public void clearContent() { inventory.clear(); }
+
+    // --- WorldlyContainer (block hoppers) ---
+    @Override public int[] getSlotsForFace(Direction side) { return new int[]{0, 1}; }
+    @Override public boolean canPlaceItemThroughFace(int index, ItemStack itemStack, @Nullable Direction direction) { return false; }
+    @Override public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction) { return false; }
 
     // --- MenuProvider ---
     @Override
