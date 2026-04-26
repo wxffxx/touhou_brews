@@ -145,8 +145,6 @@ public class SteamerBlockEntity extends BlockEntity implements ExtendedScreenHan
         return new SteamerMenu(syncId, playerInv, this, data);
     }
 
-    public NonNullList<ItemStack> getInventory() { return inventory; }
-
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);

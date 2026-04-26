@@ -136,8 +136,6 @@ public class PresserBlockEntity extends BlockEntity implements ExtendedScreenHan
         return new PresserMenu(syncId, playerInv, this, data);
     }
 
-    public NonNullList<ItemStack> getInventory() { return inventory; }
-
     @Override protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         ContainerHelper.saveAllItems(tag, inventory);

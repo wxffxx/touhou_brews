@@ -8,11 +8,9 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.ItemStack;
 
 public class ModItems {
 
@@ -226,6 +224,27 @@ public class ModItems {
             case 4 -> switch (quality) { case 1->CUSTOM_4_Q1; case 2->CUSTOM_4_Q2; case 3->CUSTOM_4_Q3; case 4->CUSTOM_4_Q4; case 5->CUSTOM_4; default->CUSTOM_4_SPOILED; };
             case 5 -> switch (quality) { case 1->CUSTOM_5_Q1; case 2->CUSTOM_5_Q2; case 3->CUSTOM_5_Q3; case 4->CUSTOM_5_Q4; case 5->CUSTOM_5; default->CUSTOM_5_SPOILED; };
             default -> CUSTOM_1_SPOILED;
+        };
+    }
+
+    /** Resolve a brewTypeId + quality to an ItemStack. Used by machines that need to produce brew outputs. */
+    public static ItemStack resolveBrewOutput(String brewTypeId, int quality) {
+        return switch (brewTypeId) {
+            case "beer"         -> new ItemStack(getBeerByQuality(quality));
+            case "remilia_wine" -> new ItemStack(getWineByQuality(quality));
+            case "eirin_umeshu" -> new ItemStack(getUmeshuByQuality(quality));
+            case "aomeshu"      -> new ItemStack(getAomeshuByQuality(quality));
+            case "custom_1"     -> new ItemStack(getCustomByQuality(1, quality));
+            case "custom_2"     -> new ItemStack(getCustomByQuality(2, quality));
+            case "custom_3"     -> new ItemStack(getCustomByQuality(3, quality));
+            case "custom_4"     -> new ItemStack(getCustomByQuality(4, quality));
+            case "custom_5"     -> new ItemStack(getCustomByQuality(5, quality));
+            case "ibuki_sake"   -> BrewItem.create(IBUKI_SAKE, quality);
+            case "mijiu"        -> BrewItem.create(MIJIU, quality);
+            case "huangjiu"     -> BrewItem.create(HUANGJIU, quality);
+            case "mead"         -> BrewItem.create(MEAD, quality);
+            case "baijiu"       -> BrewItem.create(BAIJIU, quality);
+            default -> ItemStack.EMPTY;
         };
     }
 

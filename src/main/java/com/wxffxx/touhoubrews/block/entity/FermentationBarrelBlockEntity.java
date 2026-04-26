@@ -1,7 +1,6 @@
 package com.wxffxx.touhoubrews.block.entity;
 
 import com.wxffxx.touhoubrews.config.BrewConfigManager;
-import com.wxffxx.touhoubrews.item.BrewItem;
 import com.wxffxx.touhoubrews.menu.FermentationBarrelMenu;
 import com.wxffxx.touhoubrews.registry.ModBlockEntities;
 import com.wxffxx.touhoubrews.registry.ModItems;
@@ -141,34 +140,7 @@ public class FermentationBarrelBlockEntity extends BlockEntity implements Extend
 
     /** Resolve the output ItemStack for a brew type ID + quality. */
     private static ItemStack resolveBrewOutput(String brewTypeId, int quality) {
-        return switch (brewTypeId) {
-            case "beer"         -> new ItemStack(ModItems.getBeerByQuality(quality));
-            case "remilia_wine" -> new ItemStack(ModItems.getWineByQuality(quality));
-            case "eirin_umeshu" -> new ItemStack(ModItems.getUmeshuByQuality(quality));
-            case "aomeshu"      -> new ItemStack(ModItems.getAomeshuByQuality(quality));
-            case "custom_1"     -> new ItemStack(ModItems.getCustomByQuality(1, quality));
-            case "custom_2"     -> new ItemStack(ModItems.getCustomByQuality(2, quality));
-            case "custom_3"     -> new ItemStack(ModItems.getCustomByQuality(3, quality));
-            case "custom_4"     -> new ItemStack(ModItems.getCustomByQuality(4, quality));
-            case "custom_5"     -> new ItemStack(ModItems.getCustomByQuality(5, quality));
-            default -> {
-                // Try to look up the brew type's base item and use BrewItem.create()
-                net.minecraft.world.item.Item base = resolveBaseItem(brewTypeId);
-                yield base != null ? BrewItem.create(base, quality) : ItemStack.EMPTY;
-            }
-        };
-    }
-
-    /** Map a brew type ID to its base (fixedQuality=-1) item. */
-    private static net.minecraft.world.item.Item resolveBaseItem(String brewTypeId) {
-        return switch (brewTypeId) {
-            case "ibuki_sake" -> ModItems.IBUKI_SAKE;
-            case "mijiu"      -> ModItems.MIJIU;
-            case "huangjiu"   -> ModItems.HUANGJIU;
-            case "mead"       -> ModItems.MEAD;
-            case "baijiu"     -> ModItems.BAIJIU;
-            default -> null;
-        };
+        return ModItems.resolveBrewOutput(brewTypeId, quality);
     }
 
     @Override
@@ -176,9 +148,6 @@ public class FermentationBarrelBlockEntity extends BlockEntity implements Extend
         ItemStack preview = inventory.get(3);
         if (preview.isEmpty() || progress == 0) return;
 
-        // Give the player the item, or spawn it into the world
-        ItemStack extracted = preview.copy();
-        
         // Consume ingredients
         ItemStack slot0 = inventory.get(0);
         boolean hadSecondary = !inventory.get(1).isEmpty();
@@ -198,9 +167,6 @@ public class FermentationBarrelBlockEntity extends BlockEntity implements Extend
         
         if (level instanceof ServerLevel sl) {
             sl.playSound(null, worldPosition, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0f, 0.6f);
-            // We shouldn't rely on player cursor to hold extracting because `onTake` gives them the item naturally.
-            // Wait, if `onTake` gives them the preview stack, we don't need to manually spawn it!
-            // OutputSlot onTake allows the player to hold the item they clicked. So we just clear the ingredients!
         }
     }
 

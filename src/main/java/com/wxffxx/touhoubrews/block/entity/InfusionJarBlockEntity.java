@@ -1,5 +1,6 @@
 package com.wxffxx.touhoubrews.block.entity;
 
+import com.wxffxx.touhoubrews.config.BrewConfigManager;
 import com.wxffxx.touhoubrews.menu.InfusionJarMenu;
 import com.wxffxx.touhoubrews.registry.ModBlockEntities;
 import com.wxffxx.touhoubrews.registry.ModItems;
@@ -14,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -69,24 +71,32 @@ public class InfusionJarBlockEntity extends BlockEntity implements ExtendedScree
         ItemStack sugar = entity.inventory.get(2);
         ItemStack output = entity.inventory.get(3);
 
-        boolean matchesUmeshu = MachineInputRules.isInfusionBaseInput(base)
-                && base.is(ModItems.IBUKI_SAKE)
-                && MachineInputRules.isInfusionFruitInput(fruit)
-                && fruit.is(ModItems.GREEN_PLUM)
-                && MachineInputRules.isInfusionSweetenerInput(sugar);
-        boolean matchesAomeshu = MachineInputRules.isInfusionBaseInput(base)
-                && base.is(ModItems.GRAPE_JUICE)
-                && MachineInputRules.isInfusionFruitInput(fruit)
-                && fruit.is(ModItems.GREEN_PLUM)
-                && MachineInputRules.isInfusionSweetenerInput(sugar);
-        // Infusion gives a fixed mid-quality result (Q3)
-        ItemStack resultStack = matchesUmeshu  ? new ItemStack(ModItems.EIRIN_UMESHU_Q3)
-                : matchesAomeshu ? new ItemStack(ModItems.AOMESHU_Q3)
-                : ItemStack.EMPTY;
-        boolean hasInputs = !resultStack.isEmpty();
+        if (base.isEmpty() || fruit.isEmpty() || sugar.isEmpty()
+                || !MachineInputRules.isInfusionBaseInput(base)
+                || !MachineInputRules.isInfusionFruitInput(fruit)
+                || !MachineInputRules.isInfusionSweetenerInput(sugar)) {
+            entity.resetProgress();
+            return;
+        }
+
+        com.wxffxx.touhoubrews.config.BrewRecipeEntry matched = null;
+        for (com.wxffxx.touhoubrews.config.BrewRecipeEntry recipe
+                : BrewConfigManager.recipes().infusion_jar) {
+            if (matchesInfusionRecipe(recipe, base, fruit, sugar)) {
+                matched = recipe;
+                break;
+            }
+        }
+
+        if (matched == null) {
+            entity.resetProgress();
+            return;
+        }
+
+        ItemStack resultStack = ModItems.resolveBrewOutput(matched.output_brew_type, matched.output_quality);
         boolean outputFree = output.isEmpty()
                 || (ItemStack.isSameItemSameTags(output, resultStack) && output.getCount() < output.getMaxStackSize());
-        if (!hasInputs || !outputFree) {
+        if (!outputFree) {
             entity.resetProgress();
             return;
         }
@@ -117,6 +127,22 @@ public class InfusionJarBlockEntity extends BlockEntity implements ExtendedScree
                 serverLevel.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 0.9f, 1.1f);
             }
         }
+    }
+
+    private static boolean matchesInfusionRecipe(
+            com.wxffxx.touhoubrews.config.BrewRecipeEntry recipe,
+            ItemStack base, ItemStack fruit, ItemStack sugar) {
+        return itemMatches(base, recipe.base)
+                && itemMatches(fruit, recipe.fruit)
+                && itemMatches(sugar, recipe.sweetener);
+    }
+
+    private static boolean itemMatches(ItemStack stack, String itemId) {
+        if (itemId == null) return false;
+        try {
+            ResourceLocation rl = new ResourceLocation(itemId);
+            return stack.is(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(rl));
+        } catch (Exception e) { return false; }
     }
 
     @Override public int getContainerSize() { return inventory.size(); }

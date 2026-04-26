@@ -55,8 +55,6 @@ public class BrewItem extends Item {
 
     private final BrewType brewType;
     private final int fixedQuality; // -1 = read from NBT; >= 0 = baked-in quality (used for split beer items)
-    private static final int FIVE_STAR_DURATION = 20 * 60 * 5;
-
     public BrewItem(Properties properties, BrewType type) {
         this(properties, type, -1);
     }

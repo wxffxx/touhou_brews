@@ -115,8 +115,6 @@ public class KojiTrayBlockEntity extends BlockEntity implements ExtendedScreenHa
         return new KojiTrayMenu(syncId, playerInv, this, data);
     }
 
-    public NonNullList<ItemStack> getInventory() { return inventory; }
-
     @Override protected void saveAdditional(CompoundTag tag) { super.saveAdditional(tag); ContainerHelper.saveAllItems(tag, inventory); tag.putInt("Progress", progress); }
     @Override public void load(CompoundTag tag) { super.load(tag); inventory.clear(); ContainerHelper.loadAllItems(tag, inventory); progress = tag.getInt("Progress"); }
     @Nullable @Override public Packet<ClientGamePacketListener> getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }

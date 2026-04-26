@@ -38,7 +38,7 @@ hs_err_*.log
 replay_*.log
 *.hprof
 *.jfr
-textures_prompts.txt
+*.class
 local_notes.md
 
 # pending / WIP assets (not ready to commit)
